@@ -1,0 +1,22 @@
+[package]
+name = "cp-lp-escrow"
+version = "0.1.0"
+description = "Created with Anchor"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "cp_lp_escrow"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = "0.29.0"
+anchor-spl = "0.29.0"
+cp-swap-state = { path = "../../libraries/cp-swap-state" }
+precise_number = { path = "../../libraries/precise_number" }
