@@ -12,6 +12,9 @@ pub mod admin {
 
     declare_id!("v9mcAqmTbjJuFdbD5mMtNuTgwh2FhNCHQVPrf7W3dva");
 }
+pub mod caller_program {
+    anchor_lang::prelude::declare_id!("b1tVsd3q8i4JpSJctQCQtkScXou4mVaKVhSJThiqf3s");
+}
 
 pub const REACTOR_SEED: &str = "reactor";
 pub const REACTOR_CONFIG_SEED: &str = "config";

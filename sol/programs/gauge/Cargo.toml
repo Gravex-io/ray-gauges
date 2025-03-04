@@ -20,7 +20,7 @@ anchor-lang = "0.29.0"
 anchor-spl = "0.29.0"
 precise_number = { path = "../../libraries/precise_number" }
 reactor = { path = "../reactor", features = ["cpi"] }
-raydium-amm-v3 = { path = "../../vendor/raydium-clmm/programs/amm", features = [
+raydium-amm-v3 = { git = "https://github.com/raydium-io/raydium-clmm", branch = "fix_guage_depend", features = [
     "cpi",
 ] }
 cp-swap-state = { path = "../../libraries/cp-swap-state" }

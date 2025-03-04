@@ -1,11 +1,6 @@
 [workspace]
 resolver = "2"
-members = [
-    "programs/*",
-    "libraries/*",
-    "vendor/raydium-clmm/programs/*",
-    "vendor/raydium-cp-swap/programs/*",
-]
+members = ["programs/*", "libraries/*"]
 [profile.release]
 overflow-checks = true
 lto = "fat"
