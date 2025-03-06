@@ -9,11 +9,7 @@ export interface InitGlobalConfigArgs {
 }
 
 export interface InitGlobalConfigAccounts {
-  /**
-   * TODO: admin check
-   * Will assert that this signer address == crate::ID
-   * This instruction could be permissionless, were it not for the the "ray_emission_per_day" argument
-   */
+  /** must be admin */
   payer: PublicKey
   gaugeConfig: PublicKey
   rayHopper: PublicKey

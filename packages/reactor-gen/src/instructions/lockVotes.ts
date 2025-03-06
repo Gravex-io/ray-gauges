@@ -11,6 +11,7 @@ export interface LockVotesArgs {
 export interface LockVotesAccounts {
   owner: PublicKey
   reactor: PublicKey
+  sysvarInstruction: PublicKey
 }
 
 export const layout = borsh.struct([borsh.u64("amount")])
@@ -24,6 +25,7 @@ export function lockVotes(
   const keys: Array<AccountMeta> = [
     { pubkey: accounts.owner, isSigner: true, isWritable: true },
     { pubkey: accounts.reactor, isSigner: false, isWritable: true },
+    { pubkey: accounts.sysvarInstruction, isSigner: false, isWritable: false },
   ]
   const identifier = Buffer.from([156, 21, 164, 149, 168, 115, 118, 227])
   const buffer = Buffer.alloc(1000)

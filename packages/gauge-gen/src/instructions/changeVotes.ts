@@ -19,6 +19,7 @@ export interface ChangeVotesAccounts {
   /** Personal reactor account for owner */
   reactor: PublicKey
   reactorProg: PublicKey
+  sysvarInstruction: PublicKey
 }
 
 export const layout = borsh.struct([borsh.i64("amount")])
@@ -36,6 +37,7 @@ export function changeVotes(
     { pubkey: accounts.personalGauge, isSigner: false, isWritable: true },
     { pubkey: accounts.reactor, isSigner: false, isWritable: true },
     { pubkey: accounts.reactorProg, isSigner: false, isWritable: false },
+    { pubkey: accounts.sysvarInstruction, isSigner: false, isWritable: false },
   ]
   const identifier = Buffer.from([48, 225, 233, 230, 123, 173, 227, 158])
   const buffer = Buffer.alloc(1000)

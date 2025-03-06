@@ -14,9 +14,12 @@ no-idl = []
 no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
+localnet=[]
 
 [dependencies]
 anchor-lang = "0.29.0"
 anchor-spl = "0.29.0"
-cp-swap-state = { path = "../../libraries/cp-swap-state" }
+raydium-cp-swap = { git = "https://github.com/raydium-io/raydium-cp-swap", features = [
+    "cpi",
+] }
 precise_number = { path = "../../libraries/precise_number" }

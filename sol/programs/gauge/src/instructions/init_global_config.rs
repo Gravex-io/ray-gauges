@@ -1,14 +1,15 @@
+use crate::{pda::*, state::*, syncer::get_now};
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, Token, TokenAccount};
-
-use crate::{pda::*, state::*, syncer::get_now};
+use reactor::ray_mint::ID as RAY_MINT_ID;
 
 #[derive(Accounts)]
 pub struct InitGaugeConfig<'info> {
-    /// TODO: admin check
-    /// Will assert that this signer address == crate::ID
-    /// This instruction could be permissionless, were it not for the the "ray_emission_per_day" argument
-    #[account(mut)]
+    /// must be admin
+    #[account(
+        mut,
+        address = crate::admin::ID
+    )]
     pub payer: Signer<'info>,
 
     #[account(
@@ -34,6 +35,7 @@ pub struct InitGaugeConfig<'info> {
     )]
     pub ray_hopper: Account<'info, TokenAccount>,
 
+    #[account(address = RAY_MINT_ID)]
     pub ray_mint: Account<'info, Mint>,
 
     pub token_program: Program<'info, Token>,

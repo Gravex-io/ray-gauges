@@ -1,11 +1,11 @@
-use anchor_lang::prelude::*;
-use reactor::cpi::accounts::{LockVotes, UnlockVotes};
-use reactor::program::Reactor as ReactorProgram;
-
 use crate::{
     state::*,
     syncer::{get_now, sync_gauge},
 };
+use anchor_lang::prelude::*;
+use anchor_lang::solana_program::sysvar::instructions as tx_instructions;
+use reactor::cpi::accounts::{LockVotes, UnlockVotes};
+use reactor::program::Reactor as ReactorProgram;
 
 #[derive(Accounts)]
 pub struct ChangeVotes<'info> {
@@ -36,6 +36,10 @@ pub struct ChangeVotes<'info> {
     pub reactor: Account<'info, reactor::state::Reactor>,
 
     pub reactor_prog: Program<'info, ReactorProgram>,
+
+    /// CHECK: Provide transaction instruction data.
+    #[account(address = tx_instructions::ID)]
+    pub sysvar_instruction: UncheckedAccount<'info>,
 }
 
 impl<'info> ChangeVotes<'info> {
@@ -45,6 +49,7 @@ impl<'info> ChangeVotes<'info> {
             UnlockVotes {
                 owner: self.owner.to_account_info(),
                 reactor: self.reactor.to_account_info(),
+                sysvar_instruction: self.sysvar_instruction.to_account_info(),
             },
         )
     }
@@ -55,6 +60,7 @@ impl<'info> ChangeVotes<'info> {
             LockVotes {
                 owner: self.owner.to_account_info(),
                 reactor: self.reactor.to_account_info(),
+                sysvar_instruction: self.sysvar_instruction.to_account_info(),
             },
         )
     }

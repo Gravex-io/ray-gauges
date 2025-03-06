@@ -10,14 +10,26 @@ use instructions::*;
 pub mod admin {
     use anchor_lang::prelude::declare_id;
 
+    #[cfg(feature = "localnet")]
     declare_id!("v9mcAqmTbjJuFdbD5mMtNuTgwh2FhNCHQVPrf7W3dva");
+
+    #[cfg(not(feature = "localnet"))]
+    declare_id!("GThUX1Atko4tqhN2NaiTazWSeFWMuiUvfFnyJyUghFMJ");
 }
+
 pub mod caller_program {
     anchor_lang::prelude::declare_id!("b1tVsd3q8i4JpSJctQCQtkScXou4mVaKVhSJThiqf3s");
 }
 
+pub mod ray_mint {
+    use anchor_lang::prelude::declare_id;
+    declare_id!("4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R");
+}
+
 pub const REACTOR_SEED: &str = "reactor";
 pub const REACTOR_CONFIG_SEED: &str = "config";
+pub const REACTOR_VAULT_SEED: &str = "ray-vault";
+pub const REACTOR_REWARD_HOPPER_SEED: &str = "ray-reward-hopper";
 
 declare_id!("DYt9TpjENhrD8GCBPiBkwVNbb8jDAELqnCCGrHqKzvwY");
 

@@ -10,10 +10,12 @@ import {
   getAssociatedTokenAddressSync,
   AccountLayout as TokenAccountLayout,
   createTransferInstruction,
+  MintLayout,
 } from "@solana/spl-token"
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token"
 import { CL_SWAP_PROGRAM_ID } from "./cl-util"
 import { METADATA_PROGRAM_ID } from "@raydium-io/raydium-sdk-v2"
+import { PublicKey } from "@solana/web3.js"
 
 export function loadKey(fname: string) {
   const f = fs.readFileSync(fname, "utf8")
@@ -39,11 +41,26 @@ export async function bankrunPrelude() {
         programId: METADATA_PROGRAM_ID,
       },
     ],
-    [],
+    [
+      {
+        address: new PublicKey("4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R"),
+        info: {
+          executable: false,
+          lamports: 343527427560,
+          owner: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
+          data: Uint8Array.from(
+            Buffer.from(
+              "AQAAAA2dsrcVq7LCAjY5jyBP5Us8MZuVZeqLqBoIkxL5pEATAbwszsT4AQAGAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "base64",
+            ),
+          ),
+        },
+      },
+    ],
   )
   const provider = new BankrunProvider(context)
   const client = new BankrunClient(context, provider)
-
+  MintLayout
   return {
     context,
     provider,

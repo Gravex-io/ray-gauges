@@ -6,7 +6,7 @@ const POOL_SEED = Buffer.from(utils.bytes.utf8.encode("pool"))
 const POOL_VAULT_SEED = Buffer.from(utils.bytes.utf8.encode("pool_vault"))
 const POOL_AUTH_SEED = Buffer.from(utils.bytes.utf8.encode("vault_and_lp_mint_auth_seed"))
 const POOL_LPMINT_SEED = Buffer.from(utils.bytes.utf8.encode("pool_lp_mint"))
-
+const POOL_OBSERVATION_SEED = Buffer.from(utils.bytes.utf8.encode("observation"))
 export class RayCpPda {
   constructor(public programId = new web3.PublicKey(CP_SWAP_PROGRAM_ID)) {}
 
@@ -32,6 +32,10 @@ export class RayCpPda {
 
   poolLpMint({ pool }: { pool: web3.PublicKey }) {
     return this.programAddress([POOL_LPMINT_SEED, pool.toBuffer()])
+  }
+
+  poolObservation({ pool }: { pool: web3.PublicKey }) {
+    return this.programAddress([POOL_OBSERVATION_SEED, pool.toBuffer()])
   }
 }
 

@@ -412,7 +412,15 @@ export type RaydiumCpSwap = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "Initialize an account to store the pool state"
+            "PDA account:",
+            "seeds = [",
+            "POOL_SEED.as_bytes(),",
+            "amm_config.key().as_ref(),",
+            "token_0_mint.key().as_ref(),",
+            "token_1_mint.key().as_ref(),",
+            "],",
+            "",
+            "Or random account: must be signed by cli"
           ]
         },
         {
@@ -479,6 +487,14 @@ export type RaydiumCpSwap = {
           "isSigner": false,
           "docs": [
             "create pool fee account"
+          ]
+        },
+        {
+          "name": "observationState",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "an account to store oracle observations"
           ]
         },
         {
@@ -721,7 +737,7 @@ export type RaydiumCpSwap = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "The owner's token account for receive token_0"
+            "The token account for receive token_0,"
           ]
         },
         {
@@ -729,7 +745,7 @@ export type RaydiumCpSwap = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "The owner's token account for receive token_1"
+            "The token account for receive token_1"
           ]
         },
         {
@@ -917,6 +933,14 @@ export type RaydiumCpSwap = {
           "docs": [
             "The mint of output token"
           ]
+        },
+        {
+          "name": "observationState",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "The program account for the most recent oracle observation"
+          ]
         }
       ],
       "args": [
@@ -1035,6 +1059,14 @@ export type RaydiumCpSwap = {
           "docs": [
             "The mint of output token"
           ]
+        },
+        {
+          "name": "observationState",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "The program account for the most recent oracle observation"
+          ]
         }
       ],
       "args": [
@@ -1137,39 +1169,62 @@ export type RaydiumCpSwap = {
       }
     },
     {
-      "name": "poolState",
+      "name": "observationState",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "authBump",
-            "type": "u8"
-          },
-          {
-            "name": "status",
+            "name": "initialized",
             "docs": [
-              "Bitwise representation of the state of the pool",
-              "bit0, 1: disable deposit(vaule is 1), 0: normal",
-              "bit1, 1: disable withdraw(vaule is 2), 0: normal",
-              "bit2, 1: disable swap(vaule is 4), 0: normal"
+              "Whether the ObservationState is initialized"
             ],
-            "type": "u8"
+            "type": "bool"
           },
           {
-            "name": "lpMintDecimals",
-            "type": "u8"
-          },
-          {
-            "name": "mint0Decimals",
+            "name": "observationIndex",
             "docs": [
-              "mint0 and mint1 decimals"
+              "the most-recently updated index of the observations array"
             ],
-            "type": "u8"
+            "type": "u16"
           },
           {
-            "name": "mint1Decimals",
-            "type": "u8"
+            "name": "poolId",
+            "type": "publicKey"
           },
+          {
+            "name": "observations",
+            "docs": [
+              "observation array"
+            ],
+            "type": {
+              "array": [
+                {
+                  "defined": "Observation"
+                },
+                100
+              ]
+            }
+          },
+          {
+            "name": "padding",
+            "docs": [
+              "padding for feature update"
+            ],
+            "type": {
+              "array": [
+                "u64",
+                4
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "poolState",
+      "type": {
+        "kind": "struct",
+        "fields": [
           {
             "name": "ammConfig",
             "docs": [
@@ -1235,9 +1290,45 @@ export type RaydiumCpSwap = {
             "type": "publicKey"
           },
           {
+            "name": "observationKey",
+            "docs": [
+              "observation account to store oracle data"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "authBump",
+            "type": "u8"
+          },
+          {
+            "name": "status",
+            "docs": [
+              "Bitwise representation of the state of the pool",
+              "bit0, 1: disable deposit(vaule is 1), 0: normal",
+              "bit1, 1: disable withdraw(vaule is 2), 0: normal",
+              "bit2, 1: disable swap(vaule is 4), 0: normal"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "lpMintDecimals",
+            "type": "u8"
+          },
+          {
+            "name": "mint0Decimals",
+            "docs": [
+              "mint0 and mint1 decimals"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "mint1Decimals",
+            "type": "u8"
+          },
+          {
             "name": "lpSupply",
             "docs": [
-              "lp mint supply"
+              "True circulating supply without burns and lock ups"
             ],
             "type": "u64"
           },
@@ -1268,11 +1359,21 @@ export type RaydiumCpSwap = {
             "type": "u64"
           },
           {
+            "name": "recentEpoch",
+            "docs": [
+              "recent epoch"
+            ],
+            "type": "u64"
+          },
+          {
             "name": "padding",
+            "docs": [
+              "padding for future updates"
+            ],
             "type": {
               "array": [
                 "u64",
-                32
+                31
               ]
             }
           }
@@ -1281,6 +1382,38 @@ export type RaydiumCpSwap = {
     }
   ],
   "types": [
+    {
+      "name": "Observation",
+      "docs": [
+        "The element of observations in ObservationState"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "blockTimestamp",
+            "docs": [
+              "The block timestamp of the observation"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "cumulativeToken0PriceX32",
+            "docs": [
+              "the cumulative of token0 price during the duration time, Q32.32, the remaining 64 bit for overflow"
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "cumulativeToken1PriceX32",
+            "docs": [
+              "the cumulative of token1 price during the duration time, Q32.32, the remaining 64 bit for overflow"
+            ],
+            "type": "u128"
+          }
+        ]
+      }
+    },
     {
       "name": "TradeDirection",
       "docs": [
@@ -1359,7 +1492,7 @@ export type RaydiumCpSwap = {
           "index": true
         },
         {
-          "name": "lpAmount",
+          "name": "lpAmountBefore",
           "type": "u64",
           "index": false
         },
@@ -1475,7 +1608,7 @@ export type RaydiumCpSwap = {
     {
       "code": 6005,
       "name": "ExceededSlippage",
-      "msg": "Swap instruction exceeds desired slippage limit"
+      "msg": "Exceeds desired slippage limit"
     },
     {
       "code": 6006,
@@ -1491,6 +1624,11 @@ export type RaydiumCpSwap = {
       "code": 6008,
       "name": "InvalidVault",
       "msg": "invaild vault"
+    },
+    {
+      "code": 6009,
+      "name": "InitLpAmountTooLess",
+      "msg": "Init lp amount is too less(Because 100 amount lp will be locked)"
     }
   ]
 };
@@ -1909,7 +2047,15 @@ export const IDL: RaydiumCpSwap = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "Initialize an account to store the pool state"
+            "PDA account:",
+            "seeds = [",
+            "POOL_SEED.as_bytes(),",
+            "amm_config.key().as_ref(),",
+            "token_0_mint.key().as_ref(),",
+            "token_1_mint.key().as_ref(),",
+            "],",
+            "",
+            "Or random account: must be signed by cli"
           ]
         },
         {
@@ -1976,6 +2122,14 @@ export const IDL: RaydiumCpSwap = {
           "isSigner": false,
           "docs": [
             "create pool fee account"
+          ]
+        },
+        {
+          "name": "observationState",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "an account to store oracle observations"
           ]
         },
         {
@@ -2218,7 +2372,7 @@ export const IDL: RaydiumCpSwap = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "The owner's token account for receive token_0"
+            "The token account for receive token_0,"
           ]
         },
         {
@@ -2226,7 +2380,7 @@ export const IDL: RaydiumCpSwap = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "The owner's token account for receive token_1"
+            "The token account for receive token_1"
           ]
         },
         {
@@ -2414,6 +2568,14 @@ export const IDL: RaydiumCpSwap = {
           "docs": [
             "The mint of output token"
           ]
+        },
+        {
+          "name": "observationState",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "The program account for the most recent oracle observation"
+          ]
         }
       ],
       "args": [
@@ -2532,6 +2694,14 @@ export const IDL: RaydiumCpSwap = {
           "docs": [
             "The mint of output token"
           ]
+        },
+        {
+          "name": "observationState",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "The program account for the most recent oracle observation"
+          ]
         }
       ],
       "args": [
@@ -2634,39 +2804,62 @@ export const IDL: RaydiumCpSwap = {
       }
     },
     {
-      "name": "poolState",
+      "name": "observationState",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "authBump",
-            "type": "u8"
-          },
-          {
-            "name": "status",
+            "name": "initialized",
             "docs": [
-              "Bitwise representation of the state of the pool",
-              "bit0, 1: disable deposit(vaule is 1), 0: normal",
-              "bit1, 1: disable withdraw(vaule is 2), 0: normal",
-              "bit2, 1: disable swap(vaule is 4), 0: normal"
+              "Whether the ObservationState is initialized"
             ],
-            "type": "u8"
+            "type": "bool"
           },
           {
-            "name": "lpMintDecimals",
-            "type": "u8"
-          },
-          {
-            "name": "mint0Decimals",
+            "name": "observationIndex",
             "docs": [
-              "mint0 and mint1 decimals"
+              "the most-recently updated index of the observations array"
             ],
-            "type": "u8"
+            "type": "u16"
           },
           {
-            "name": "mint1Decimals",
-            "type": "u8"
+            "name": "poolId",
+            "type": "publicKey"
           },
+          {
+            "name": "observations",
+            "docs": [
+              "observation array"
+            ],
+            "type": {
+              "array": [
+                {
+                  "defined": "Observation"
+                },
+                100
+              ]
+            }
+          },
+          {
+            "name": "padding",
+            "docs": [
+              "padding for feature update"
+            ],
+            "type": {
+              "array": [
+                "u64",
+                4
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "poolState",
+      "type": {
+        "kind": "struct",
+        "fields": [
           {
             "name": "ammConfig",
             "docs": [
@@ -2732,9 +2925,45 @@ export const IDL: RaydiumCpSwap = {
             "type": "publicKey"
           },
           {
+            "name": "observationKey",
+            "docs": [
+              "observation account to store oracle data"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "authBump",
+            "type": "u8"
+          },
+          {
+            "name": "status",
+            "docs": [
+              "Bitwise representation of the state of the pool",
+              "bit0, 1: disable deposit(vaule is 1), 0: normal",
+              "bit1, 1: disable withdraw(vaule is 2), 0: normal",
+              "bit2, 1: disable swap(vaule is 4), 0: normal"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "lpMintDecimals",
+            "type": "u8"
+          },
+          {
+            "name": "mint0Decimals",
+            "docs": [
+              "mint0 and mint1 decimals"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "mint1Decimals",
+            "type": "u8"
+          },
+          {
             "name": "lpSupply",
             "docs": [
-              "lp mint supply"
+              "True circulating supply without burns and lock ups"
             ],
             "type": "u64"
           },
@@ -2765,11 +2994,21 @@ export const IDL: RaydiumCpSwap = {
             "type": "u64"
           },
           {
+            "name": "recentEpoch",
+            "docs": [
+              "recent epoch"
+            ],
+            "type": "u64"
+          },
+          {
             "name": "padding",
+            "docs": [
+              "padding for future updates"
+            ],
             "type": {
               "array": [
                 "u64",
-                32
+                31
               ]
             }
           }
@@ -2778,6 +3017,38 @@ export const IDL: RaydiumCpSwap = {
     }
   ],
   "types": [
+    {
+      "name": "Observation",
+      "docs": [
+        "The element of observations in ObservationState"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "blockTimestamp",
+            "docs": [
+              "The block timestamp of the observation"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "cumulativeToken0PriceX32",
+            "docs": [
+              "the cumulative of token0 price during the duration time, Q32.32, the remaining 64 bit for overflow"
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "cumulativeToken1PriceX32",
+            "docs": [
+              "the cumulative of token1 price during the duration time, Q32.32, the remaining 64 bit for overflow"
+            ],
+            "type": "u128"
+          }
+        ]
+      }
+    },
     {
       "name": "TradeDirection",
       "docs": [
@@ -2856,7 +3127,7 @@ export const IDL: RaydiumCpSwap = {
           "index": true
         },
         {
-          "name": "lpAmount",
+          "name": "lpAmountBefore",
           "type": "u64",
           "index": false
         },
@@ -2972,7 +3243,7 @@ export const IDL: RaydiumCpSwap = {
     {
       "code": 6005,
       "name": "ExceededSlippage",
-      "msg": "Swap instruction exceeds desired slippage limit"
+      "msg": "Exceeds desired slippage limit"
     },
     {
       "code": 6006,
@@ -2988,6 +3259,11 @@ export const IDL: RaydiumCpSwap = {
       "code": 6008,
       "name": "InvalidVault",
       "msg": "invaild vault"
+    },
+    {
+      "code": 6009,
+      "name": "InitLpAmountTooLess",
+      "msg": "Init lp amount is too less(Because 100 amount lp will be locked)"
     }
   ]
 };

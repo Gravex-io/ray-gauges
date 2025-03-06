@@ -123,7 +123,7 @@ impl Reactor {
         ray_decrease: u64,
         iso_ray_index: Number,
         ray_reward_index: Number,
-    ) -> Result<RayWithdrawResult> {
+    ) -> Result<()> {
         self.accrue_iso_ray(iso_ray_index);
 
         self.accrue_ray_rewards(ray_reward_index);
@@ -142,9 +142,7 @@ impl Reactor {
         self.ray = self.ray.checked_sub(ray_decrease).unwrap();
         self.iso_ray = self.iso_ray.checked_sub(iso_ray_decrease).unwrap();
 
-        Ok(RayWithdrawResult {
-            iso_ray_slashed: iso_ray_decrease,
-        })
+        Ok(())
     }
 
     /// Lock votes

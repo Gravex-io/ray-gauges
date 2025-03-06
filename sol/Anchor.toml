@@ -10,11 +10,11 @@ gauge = "b1tVsd3q8i4JpSJctQCQtkScXou4mVaKVhSJThiqf3s"
 reactor = "DYt9TpjENhrD8GCBPiBkwVNbb8jDAELqnCCGrHqKzvwY"
 
 [registry]
-url = "https://api.apr.dev"
+url = "https://github.com/raydium-io/ray-gauges"
 
 [provider]
 cluster = "Localnet"
-wallet = "/home/tomtop2/.config/solana/id.json"
+wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

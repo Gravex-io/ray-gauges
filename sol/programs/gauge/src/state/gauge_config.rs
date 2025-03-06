@@ -30,8 +30,6 @@ impl GaugeConfig {
     pub const SIZE: usize =
         // discriminator
         8 +
-        // gov_authority
-        32 +
         // ray_hopper
         32 +
         // ray_emission_per_day

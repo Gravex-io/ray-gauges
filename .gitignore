@@ -7,3 +7,5 @@ build
 /sol/target/deploy/*.so
 !/sol/target/deploy
 !/sol/target/deploy/*-keypair.json
+.yarn
+.yarnrc.yml

@@ -14,6 +14,7 @@ no-idl = []
 no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
+localnet =[]
 
 [dependencies]
 anchor-lang = "0.29.0"
@@ -23,5 +24,4 @@ reactor = { path = "../reactor", features = ["cpi"] }
 raydium-amm-v3 = { git = "https://github.com/raydium-io/raydium-clmm", branch = "fix_guage_depend", features = [
     "cpi",
 ] }
-cp-swap-state = { path = "../../libraries/cp-swap-state" }
 cp-lp-escrow = { path = "../cp-lp-escrow", features = ["cpi"] }

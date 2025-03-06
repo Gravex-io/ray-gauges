@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "0.29.0",
+    "@coral-xyz/borsh": "0.29.0",
     "@raydium-io/raydium-sdk-v2": "^0.1.92-alpha",
     "@raygauge/cp-lp-escrow-pda": "0.0.1",
     "@raygauge/cp-lp-escrow-sdk": "0.0.1",

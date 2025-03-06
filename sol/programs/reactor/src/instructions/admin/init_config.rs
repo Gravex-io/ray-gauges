@@ -1,7 +1,10 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, Token, TokenAccount};
 
-use crate::{errors::ReactorErrors, state::ReactorConfig, REACTOR_CONFIG_SEED};
+use crate::{
+    errors::ReactorErrors, state::ReactorConfig, REACTOR_CONFIG_SEED, REACTOR_REWARD_HOPPER_SEED,
+    REACTOR_VAULT_SEED,
+};
 
 #[derive(Accounts)]
 pub struct InitConfig<'info> {
@@ -18,7 +21,7 @@ pub struct InitConfig<'info> {
             REACTOR_CONFIG_SEED.as_ref(),
         ],
         bump,
-        space = 8 + ReactorConfig::LEN
+        space = ReactorConfig::LEN
     )]
     pub config: Account<'info, ReactorConfig>,
 
@@ -26,7 +29,7 @@ pub struct InitConfig<'info> {
     #[account(
         init,
         seeds = [
-            b"ray-vault".as_ref(),
+            REACTOR_VAULT_SEED.as_ref(),
         ],
         bump,
         token::authority = config,
@@ -39,7 +42,7 @@ pub struct InitConfig<'info> {
     #[account(
         init,
         seeds = [
-            b"ray-reward-hopper".as_ref(),
+            REACTOR_REWARD_HOPPER_SEED.as_ref(),
         ],
         bump,
         token::authority = config,
@@ -48,7 +51,7 @@ pub struct InitConfig<'info> {
     )]
     pub ray_hopper: Account<'info, TokenAccount>,
 
-    // This is a high-trust instruction and the ray_mint must be correct
+    #[account(address = crate::ray_mint::ID)]
     pub ray_mint: Account<'info, Mint>,
 
     pub token_program: Program<'info, Token>,

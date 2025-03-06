@@ -40,7 +40,7 @@ async function prelude(rayPerDay: bigint = 360n) {
   const gaugeConfig = await logBlock("init global gauge config", () =>
     initGlobalGaugeConfig({
       client,
-      payer: client.getPayer(),
+      payer: admin,
       rayMint: ray,
       rayPerDay,
     }),

@@ -690,15 +690,8 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
- "cp-swap-state",
  "precise_number",
-]
-
-[[package]]
-name = "cp-swap-state"
-version = "0.1.0"
-dependencies = [
- "anchor-lang",
+ "raydium-cp-swap",
 ]
 
 [[package]]
@@ -943,7 +936,6 @@ dependencies = [
  "anchor-lang",
  "anchor-spl",
  "cp-lp-escrow",
- "cp-swap-state",
  "precise_number",
  "raydium-amm-v3",
  "reactor",
@@ -1686,6 +1678,22 @@ dependencies = [
  "spl-memo 4.0.0",
  "spl-token-metadata-interface",
  "uint 0.9.5 (git+https://github.com/raydium-io/parity-common)",
+]
+
+[[package]]
+name = "raydium-cp-swap"
+version = "0.1.0"
+source = "git+https://github.com/raydium-io/raydium-cp-swap#cfdb70a8ca9ea62bb5c304d4492ac0fc371ae8ce"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+ "arrayref",
+ "bytemuck",
+ "solana-security-txt",
+ "spl-math",
+ "spl-memo 4.0.0",
+ "spl-token 4.0.0",
+ "uint 0.9.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

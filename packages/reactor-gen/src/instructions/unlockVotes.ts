@@ -11,6 +11,7 @@ export interface UnlockVotesArgs {
 export interface UnlockVotesAccounts {
   owner: PublicKey
   reactor: PublicKey
+  sysvarInstruction: PublicKey
 }
 
 export const layout = borsh.struct([borsh.u64("amount")])
@@ -24,6 +25,7 @@ export function unlockVotes(
   const keys: Array<AccountMeta> = [
     { pubkey: accounts.owner, isSigner: true, isWritable: true },
     { pubkey: accounts.reactor, isSigner: false, isWritable: true },
+    { pubkey: accounts.sysvarInstruction, isSigner: false, isWritable: false },
   ]
   const identifier = Buffer.from([31, 4, 235, 111, 176, 15, 112, 106])
   const buffer = Buffer.alloc(1000)

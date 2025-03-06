@@ -3,6 +3,7 @@ import { ReactorPda } from "./pda"
 import { PROGRAM_ID, accounts, instructions } from "@raygauge/reactor-gen"
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token"
 import { PreciseNumber } from "@raygauge/number"
+import { SYSVAR_INSTRUCTIONS_PUBKEY } from "@solana/web3.js"
 
 export interface ReactorSdkConfig {
   /** The Reactor program id */
@@ -122,7 +123,7 @@ export class ReactorSdk {
   ixLockVotes({ amount }: { amount: bigint }) {
     return instructions.lockVotes(
       { amount: new BN(amount.toString()) },
-      { owner: this.owner, reactor: this.selfAddress },
+      { owner: this.owner, reactor: this.selfAddress, sysvarInstruction: SYSVAR_INSTRUCTIONS_PUBKEY },
     )
   }
 
@@ -130,7 +131,7 @@ export class ReactorSdk {
   ixUnlockVotes({ amount }: { amount: bigint }) {
     return instructions.unlockVotes(
       { amount: new BN(amount.toString()) },
-      { owner: this.owner, reactor: this.selfAddress },
+      { owner: this.owner, reactor: this.selfAddress, sysvarInstruction: SYSVAR_INSTRUCTIONS_PUBKEY },
     )
   }
 

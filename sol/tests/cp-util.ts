@@ -33,13 +33,13 @@ export async function initPoolIx(
 ) {
   const poolAddress = pda.pool({ index: 0, mint0: token0, mint1: token1 })
   const lpMintAddress = pda.poolLpMint({ pool: poolAddress })
+  const observationAddress = pda.poolObservation({ pool: poolAddress })
   const vault0 = pda.poolValut({ pool: poolAddress, mint: token0 })
   const vault1 = pda.poolValut({ pool: poolAddress, mint: token1 })
   const [creatorLpTokenAddress] = web3.PublicKey.findProgramAddressSync(
     [creator.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), lpMintAddress.toBuffer()],
     ASSOCIATED_TOKEN_PROGRAM_ID,
   )
-
   const creatorToken0 = getAssociatedTokenAddressSync(token0, creator, false)
   const creatorToken1 = getAssociatedTokenAddressSync(token1, creator, false)
   const ix = await program.methods
@@ -64,6 +64,7 @@ export async function initPoolIx(
       rent: web3.SYSVAR_RENT_PUBKEY,
       associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       createPoolFee: CP_SWAP_POOL_FEE_ACCOUNT,
+      observationState: observationAddress,
     })
     .instruction()
 

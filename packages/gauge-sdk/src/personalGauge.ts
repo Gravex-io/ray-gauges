@@ -3,6 +3,7 @@ import { accounts, instructions, PROGRAM_ID } from "@raygauge/gauge-gen"
 import { PROGRAM_ID as REACTOR_PROGRAM_ID } from "@raygauge/reactor-gen"
 import { GaugePDA } from "@raygauge/gauge-pda"
 import { ReactorPda } from "@raygauge/reactor-sdk"
+import { SYSVAR_INSTRUCTIONS_PUBKEY } from "@solana/web3.js"
 
 type PersonalGaugeData = {
   /** The address of the gauge program */
@@ -91,6 +92,7 @@ export class PersonalGauge {
         personalGauge: this.address,
         reactor,
         reactorProg: this.data.reactorProgramId,
+        sysvarInstruction: SYSVAR_INSTRUCTIONS_PUBKEY,
       },
     )
   }

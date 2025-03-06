@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, Token, TokenAccount};
-use cp_swap_state::PoolState;
+use raydium_cp_swap::states::PoolState;
 use crate::{clock::now, state::*, LP_ESCROW_SEED, TIME_TRACKER_SEED};
 
 #[derive(Accounts)]

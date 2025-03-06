@@ -9,6 +9,16 @@ use instructions::*;
 
 declare_id!("b1tVsd3q8i4JpSJctQCQtkScXou4mVaKVhSJThiqf3s");
 
+pub mod admin {
+    use anchor_lang::prelude::declare_id;
+
+    #[cfg(feature = "localnet")]
+    declare_id!("v9mcAqmTbjJuFdbD5mMtNuTgwh2FhNCHQVPrf7W3dva");
+
+    #[cfg(not(feature = "localnet"))]
+    declare_id!("GThUX1Atko4tqhN2NaiTazWSeFWMuiUvfFnyJyUghFMJ");
+}
+
 #[program]
 pub mod gauge {
     use super::*;

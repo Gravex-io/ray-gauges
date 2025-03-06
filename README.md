@@ -44,7 +44,7 @@ Run tests (must compile related TypeScript packages first)
 ```
 $ cd sol
 $ tsc --build
-$ yarn test
+$ anchor test -- --features localnet
 $ cargo test
 ```
 

@@ -15,6 +15,7 @@ import { tenant, reactor, ReactorPda } from "@raygauge/reactor-sdk"
 import { instructions } from "@raygauge/reactor-gen"
 import { TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync } from "@solana/spl-token"
 import { assert, AssertionError, expect } from "chai"
+import { PublicKey } from "@solana/web3.js"
 
 const SECONDS_DAY = 24 * 60 * 60
 
@@ -838,22 +839,15 @@ export async function initReactor({
 
 /** Create a Reactor Config with 50% APR on isoRAY and 100 daily RAY emitted */
 export async function initReactorConfig({ client, admin }: { client: BankrunClient; admin: web3.Keypair }) {
-  const rayMintKP = web3.Keypair.generate()
-
-  await createMint({
-    client,
-    mint: rayMintKP,
-    payer: admin,
-    authority: admin.publicKey,
-    decimals: 9,
-  })
+  // account loaded in bankrun
+  const rayMint = new PublicKey("4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R")
 
   const pda = new ReactorPda({})
 
   const ix = instructions.initConfig(
     { isoRayAprBps: 5000, rayRewardDailyEmission: new BN(100) },
     {
-      rayMint: rayMintKP.publicKey,
+      rayMint: rayMint,
       rayVault: pda.rayVault(),
       payer: admin.publicKey,
       config: pda.tenant(),
@@ -869,7 +863,7 @@ export async function initReactorConfig({ client, admin }: { client: BankrunClie
     connection: client.getConnection(),
   })
 
-  return { ray: rayMintKP.publicKey, tenantSdk }
+  return { ray: rayMint, tenantSdk }
 }
 
 export async function mintRayToUser({
